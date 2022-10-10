@@ -1,0 +1,103 @@
+↓Input_variables [steps.InputVariablesStep-1665396484727]: 
+↓computeStartAndEndKey [steps.SimpleStep-1665396484730]: 
+  expression: |
+    var _use_startkey = "[\""+ refName + "\"]";
+    var _use_endkey = "[\""+ refName + "\", {}]";
+  output: true
+↓Call_Transaction_1 [steps.TransactionStep-1665396484733]: 
+  sourceTransaction: lib_compare_files.compare_files.GetView
+  ↓_use_ddoc [variables.StepVariable-1665396484736]: 
+    description: Design document name
+    value: Refs
+  ↓_use_view [variables.StepVariable-1665396484739]: 
+    description: View function name
+    value: getVersions
+  ↓_use_reduce [variables.StepVariable-1665396484742]: 
+    description: (boolean) – Use the reduction function. Default is true
+    value: true
+  ↓_use_startkey [variables.StepVariable-1665396484745]: 
+    description: (string) – Return records starting with the specified key. Optional
+  ↓_use_endkey [variables.StepVariable-1665396484748]: 
+    description: (string) – Stop returning records when the specified key is reached. Optional
+↓JsonSource_1 [steps.JsonSourceStep-1665396484751]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665396484733
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output
+  variableName: versions
+↓getNextRefVersion [steps.SimpleStep-1665396484754]: 
+  expression: |
+    'var nextVersion = 1;
+    if(versions.rows != undefined && versions.rows.length > 0){
+    	versions = versions.rows.map((x)=>{
+    		return x.value;
+    	})
+    	nextVersion = Math.max.apply(Math, versions) + 1;
+    	log.warn("existing versions for this ref are " + JSON.stringify(versions));
+    }
+    log.warn("next ref version is " + JSON.stringify(nextVersion));'
+↓jSimpleSource [steps.SimpleSourceStep-1665396484757]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665396484727
+        - java.lang.String: 
+          - ↑value: ./csv/text()
+  variableName: fp
+↓Read_CSV [steps.ReadCSVStep-1665396484760]: 
+  dataFile: fp
+↓JsonSource [steps.JsonSourceStep-1665396484763]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665396484760
+        - java.lang.String: 
+          - ↑value: ./line
+  variableName: docs
+↓Sequence_JS [steps.SimpleStep-1665396484766]: 
+  expression: |
+    'if(docs != undefined && refName != undefined && refName != ""){
+    	//log.warn("str " + JSON.stringify(docs));
+    	var colDef = docs[0].line.col;
+    	//var ids = [];
+    	docs = docs.slice(1);
+    	docs = docs.map((x, i)=>{
+    		var currentObject = {};
+    		log.warn("x " + JSON.stringify(x));
+    		currentObject["_id"] = refName + "_" + nextVersion + "_"+ x.line.col[0];
+    		currentObject["ref"] = refName;
+    		currentObject["refVersion"] = nextVersion;
+    		currentObject["version"] = 1;
+    		currentObject["currentID"] = x.line.col[0];
+    		currentObject["index"] = i;
+    		currentObject["data"] = {};
+    		x.line.col.forEach((elem, index)=>{
+    			currentObject["data"][colDef[index]] = elem; 
+    		})
+    		return currentObject;
+    	})
+    	var _use_json_base = "" + JSON.stringify(docs);
+    	//var _id = "" + JSON.stringify(ids);
+    	log.warn("_use_json_base" + JSON.stringify(_use_json_base));
+    	//log.warn("_id" + JSON.stringify(_id));
+    }
+    else{
+    	log.error("doc or refname is missing");
+    }
+    '
+↓Call_Transaction [steps.TransactionStep-1665396484769]: 
+  sourceTransaction: lib_compare_files.compare_files.PostBulkDocuments
+  ↓_use_json_base [variables.StepVariable-1665396484772]: 
+    description: (string) – JSON use as a base for the array of documents (js array), or for individual documents (js object). Optional
+↓csv [variables.RequestableVariable-1665396484775]: 
+  isFileUpload: true
+  value: 
+↓refName [variables.RequestableVariable-1665396484778]: 

@@ -1,0 +1,82 @@
+databaseName: compare_files
+↓GetServerInfo [transactions.couchdb.GetServerInfoTransaction]: 
+  ↑default: true
+↓GetView [transactions.couchdb.GetViewTransaction]: 
+  ↓_use_ddoc [variables.RequestableVariable-1665396413962]: 
+    description: Design document name
+  ↓_use_view [variables.RequestableVariable-1665396413965]: 
+    description: View function name
+  ↓_use_reduce [variables.RequestableVariable-1665396413968]: 
+    description: (boolean) – Use the reduction function. Default is true
+  ↓_use_startkey [variables.RequestableVariable-1665396413971]: 
+    description: (string) – Return records starting with the specified key. Optional
+  ↓_use_endkey [variables.RequestableVariable-1665396413974]: 
+    description: (string) – Stop returning records when the specified key is reached. Optional
+  ↓_use_group [variables.RequestableVariable-1665396413977]: 
+    description: (boolean) – Group the results using the reduce function to a group or single row. Default is false
+  ↓_use_group_level [variables.RequestableVariable-1665396413980]: 
+    description: (number) – Specify the group level to be used. Optional
+↓PostBulkDocuments [transactions.couchdb.PostBulkDocumentsTransaction]: 
+  ↓_use_json_base [variables.RequestableVariable-1665396413984]: 
+    description: (string) – JSON use as a base for the array of documents (js array), or for individual documents (js object). Optional
+  ↓_id [variables.RequestableMultiValuedVariable-1665396413987]: 
+    description: Document ids
+↓Refs [couchdb.DesignDocument]: 
+  docdata: 
+    →: |
+      '{
+        "_id": "_design\/Refs",
+        "filters": {},
+        "updates": {},
+        "views": {
+          "getVersions": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              emit([doc.ref, doc.refVersion], doc.refVersion);\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }",
+            "reduce": "_approx_count_distinct"
+          },
+          "getRef": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              emit([doc.ref, doc.currentID, doc.data, doc.refVersion, doc.index, doc._id], doc._id);\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }",
+            "reduce": "_approx_count_distinct"
+          },
+          "getRefByVersion": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              emit([doc.ref, doc.refVersion, doc.index], doc.data);\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
+          },
+          "comapreRefs": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              emit([doc.ref, doc.currentID, doc.refVersion], {data: doc.data, refVersion: doc.refVersion, index: doc.index});\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }",
+            "reduce": "function (keys, values, rereduce) {\r\n
+          try {\r\n
+              if (rereduce) {\r\n
+                  return [].concat.apply([], values);\r\n
+              } else {\r\n
+                  return values;\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
+          }
+        }
+      }'

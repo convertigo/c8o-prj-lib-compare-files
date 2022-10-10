@@ -1,0 +1,210 @@
+↓CallSequence1 [ngx.components.UIDynamicAction-1665416025384]: 
+  beanData: '{"ionBean":"CallSequenceAction","requestable":"plain:lib_compare_files.CompareRefs"}'
+  ↓ref [ngx.components.UIControlVariable-1665416025387]: 
+    comment: new variable
+    varValue: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+        - MobileSmartSourceType: source:{"filter":"Shared","project":"lib_compare_files","input":"","model":{"data":[{"priority":1665396001467,"regular":true}],"path":"?.fileRef","prefix":"","suffix":"","custom":"","useCustom":false}}
+  ↓v1 [ngx.components.UIControlVariable-1665416025390]: 
+    comment: new variable
+    varValue: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+        - MobileSmartSourceType: source:{"filter":"Shared","project":"lib_compare_files","input":"","model":{"data":[{"priority":1665396001467,"regular":true}],"path":"?.version1","prefix":"","suffix":"","custom":"","useCustom":false}}
+  ↓v2 [ngx.components.UIControlVariable-1665416025393]: 
+    comment: new variable
+    varValue: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+        - MobileSmartSourceType: source:{"filter":"Shared","project":"lib_compare_files","input":"","model":{"data":[{"priority":1665396001467,"regular":true}],"path":"?.version2","prefix":"","suffix":"","custom":"","useCustom":false}}
+  ↓computeResult [ngx.components.UICustomAsyncAction-1665416025396]: 
+    actionValue: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.FormatedContent
+        - com.twinsoft.convertigo.beans.common.FormatedContent: 
+          →: |
+            '		try {
+            			let HTMLCellRenderer = function HTMLCellRenderer () {};
+            			HTMLCellRenderer.prototype.init = function(params) {
+            				try{
+            					this.eGui = document.createElement(''div'');	
+            					// if displayValue field exists display it, if not display field value																		
+            					this.eGui.innerHTML = params.value;
+            				}
+            				catch(e){
+            					this.eGui.innerHTML = "<p>ko<p>"
+            				}
+            				
+            			}
+            			HTMLCellRenderer.prototype.getGui = function() {
+            			    return this.eGui;
+            			};
+            			HTMLCellRenderer.prototype.refresh = function(params) {
+            				this.eGui.innerHTML = params.value;
+            				return true;
+            			}
+            			let diffMe = (str1, str2)=>{
+            				let str = "";
+            				let arr = Diff.diffChars(str1, str2);
+            				arr.forEach((part) => {
+            					// green for additions, red for deletions
+            				  	// grey for common parts
+            					let color = part.added ? ''green'' :
+            				    part.removed ? ''red'' : ''black'';
+            					str+= "<span style=''color:"+color+"''>" + part.value + "</span>";
+            				  
+            				});
+            				return str;
+            			}
+            			console.log("props.parent.out",props.parent.out);
+            			const rows_filtered = props.parent.out.results;
+            			const col0 = props.parent.out.col0;
+            			const col1 = props.parent.out.col1;
+            			const added_columns = props.parent.out.added_columns != null ? props.parent.out.added_columns : [];
+            			const deleted_columns = props.parent.out.deleted_columns != null ? props.parent.out.deleted_columns : [];
+            			const funcStyle = (params)=>{
+            				//console.log("params", params);
+            				if(params.data != undefined && params.data._c8o_additional != undefined){
+            					if(params.data._c8o_additional.label == "added"){
+            						return { ''background-color'': ''var(--ion-color-success)'' };
+            					}
+            					else if(params.data._c8o_additional.label == "deleted"){
+            						return { ''background-color'': ''var(--ion-color-danger)'' };
+            					}
+            					else if(params.data._c8o_additional.label == "modified"){
+            						//console.log("params", params);
+            						debugger;
+            						if(params.data._c8o_additional.structure.values.indexOf(params.column.colId) != -1){
+            							return { ''border-color'': ''var(--ion-color-warning)'' };
+            						}
+            						else if(params.data._c8o_additional.structure.added_columns.indexOf(params.column.colId) != -1){
+            							return { ''background-color'': ''var(--ion-color-success)'' };
+            						}
+            						else if(params.data._c8o_additional.structure.deleted_columns.indexOf(params.column.colId) != -1){
+            							return { ''background-color'': ''var(--ion-color-danger)'' };
+            						}
+            						
+            					}
+            				}
+            				 
+            				return { ''background-color'': ''white'' };
+            			}
+            			// set colDefs
+            			let colDef1 = {};
+            			const result = [];
+            			let arrays = [col0, col1]
+            			arrays.forEach(array => {
+            			  array.forEach((item, idx) => {
+            			    // check if the item has already been added, if not, try to add
+            			    if(!~result.indexOf(item)) {
+            			      // if item is not first item, find position of his left sibling in result array
+            			      if(idx) {
+            			        const result_idx = result.indexOf(array[idx - 1]);
+            			        // add item after left sibling position
+            			        result.splice(result_idx + 1, 0, item);
+            			        return;
+            			      }
+            			      result.push(item);
+            			    }
+            			  });
+            			});
+            			colDef1 = result.map((x)=>{
+            				let ob= {
+            					"field": x,
+            					cellStyle: funcStyle,
+            					cellRenderer: HTMLCellRenderer
+            				}
+            				if(added_columns.indexOf(x) != -1){
+            					ob["colStyle"] = { ''background-color'': ''var(--ion-color-success) !important'' };
+            				}
+            				else if(deleted_columns.indexOf(x) != -1){
+            					ob["colStyle"] = { ''background-color'': ''var(--ion-color-danger) !important'' };
+            				}
+            				return ob;
+            			})
+            			//colDef1["cellStyle"] = { color: ''red'', ''background-color'': ''green'' }
+            			
+            			
+            			var rowData0 = [];
+            			var rowData1 = [];
+            			var obj = {};
+            			for (var idx = 0; idx < rows_filtered.length; idx++) {
+            				var currentItem = rows_filtered[idx];
+            				switch(currentItem.status.label){
+            					case "same":
+            						if(page.local.onlyChanges == false){
+            							obj = {};
+            							result.forEach((elem)=>{
+            								obj[elem] = currentItem.value[1].data[elem];
+            							});
+            							rowData1.push(obj);
+            						}
+            					break;
+            					case "deleted":
+            						obj = {_c8o_additional: currentItem.status};
+            						result.forEach((elem)=>{
+            							obj[elem] = obj[elem] = currentItem.value[0].data[elem] != undefined ? currentItem.value[0].data[elem] : "";
+            						});
+            						rowData1.push(obj);
+            					break;
+            					case "added":
+            						obj = {_c8o_additional: currentItem.status};
+            						result.forEach((elem)=>{
+            							obj[elem] = currentItem.value[0].data[elem] != undefined ? currentItem.value[0].data[elem] : "";
+            						});
+            						rowData1.push(obj);
+            					break;
+            					case "modified":
+            						obj = {_c8o_additional: currentItem.status};
+            						result.forEach((elem)=>{
+            							if(currentItem.status.structure.values.indexOf(elem) != -1){
+            								let result = diffMe(currentItem.value[0].data[elem],currentItem.value[1].data[elem]);
+            								obj[elem] = result;
+            							}
+            							else if(currentItem.status.structure.deleted_columns.indexOf(elem) != -1){
+            								obj[elem] = currentItem.value[0].data[elem];
+            							}
+            							else if(currentItem.status.structure.added_columns.indexOf(elem) != -1){
+            								obj[elem] = currentItem.value[1].data[elem];
+            							}
+            							else{
+            								obj[elem] = currentItem.value[1].data[elem];
+            							}
+            						});
+            						rowData1.push(obj);
+            					break;
+            				}
+            			}
+            			page.local.data2 = {colDef:colDef1, rowData: rowData1};
+            			console.log("this.local.data", page.local.data)
+            			console.log("this.local.data2", page.local.data2)
+            		} catch (e) {
+            			console.log("an error occured while computing", e);
+            		}
+            '
+    package_dependencies: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: diff
+              - java.lang.String: 
+                - ↑value: 5.1.0
+    page_ts_imports: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: '* as Diff'
+              - java.lang.String: 
+                - ↑value: diff
+↓ref [ngx.components.UIStackVariable-1665416049275]: 
+↓v1 [ngx.components.UIStackVariable-1665416061100]: 
+↓v2 [ngx.components.UIStackVariable-1665416064796]: 

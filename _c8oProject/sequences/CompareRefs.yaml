@@ -1,0 +1,196 @@
+↓computeKeys [steps.SimpleStep-1665396484644]: 
+  expression: |
+    var _use_ddoc = "Refs";
+    var _use_view = "comapreRefs";
+    var _use_reduce = true;
+    var _use_startkey = '["'+ ref+'"]';
+    var _use_endkey = '["'+ ref+'", {}]';
+    var _use_group = true;
+    var _use_group_level = 2;
+↓Call_Transaction [steps.TransactionStep-1665396484647]: 
+  sourceTransaction: lib_compare_files.compare_files.GetView
+  ↓_use_ddoc [variables.StepVariable-1665396484650]: 
+    description: Design document name
+  ↓_use_view [variables.StepVariable-1665396484653]: 
+    description: View function name
+  ↓_use_reduce [variables.StepVariable-1665396484656]: 
+    description: (boolean) – Use the reduction function. Default is true
+  ↓_use_startkey [variables.StepVariable-1665396484659]: 
+    description: (string) – Return records starting with the specified key. Optional
+  ↓_use_endkey [variables.StepVariable-1665396484662]: 
+    description: (string) – Stop returning records when the specified key is reached. Optional
+  ↓_use_group [variables.StepVariable-1665396484665]: 
+    description: (boolean) – Group the results using the reduce function to a group or single row. Default is false
+  ↓_use_group_level [variables.StepVariable-1665396484668]: 
+    description: (number) – Specify the group level to be used. Optional
+↓JsonSource [steps.JsonSourceStep-1665396484671]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665396484647
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/rows
+  variableName: rows
+↓Compare [steps.SimpleStep-1665396484674]: 
+  expression: |
+    'var col0, col1;
+    log.warn("ZZZZZZZZZZZZZZZZ"+JSON.stringify(rows));
+    //filter rows to get only our versions
+    var rows_filtered = rows.map(function(x){
+    		return {key:x.key, value: x.value.filter(function(y){ return y.refVersion == +v1 || y.refVersion == +v2}).sort(function(a, b){ return a.refVersion - b.refVersion })}	 
+    }).filter(function(z){
+    	return z.value.length > 0;
+    })
+    rows_filtered.sort(function(a, b){
+    	return a.value[0].index - b.value[0].index;
+    });
+    for(var i = 0; i < rows_filtered.length; i++){
+    	var current = rows_filtered[i];
+    	if(current.value[0] != undefined && current.value[1] != undefined) {
+    	}
+    }
+    var deleted_columns_glob = null;
+    var added_columns_glob = null;
+    rows_filtered.map(function(c){
+    	c.status = {label: ""};
+    	// if this line exists in both versions
+    	if(c.value[0] != undefined && c.value[1] != undefined) {
+    		// compute cols struct
+    		if(col0 == null){
+    			col0 = Object.keys(c.value[0].data);
+    			col1 = Object.keys(c.value[1].data);
+    		}
+    		// and line has same value in both versions
+    		if(JSON.stringify(c.value[0].data) === JSON.stringify(c.value[1].data)){
+    			c.status.label = "same";
+    		}
+    		else{
+    			c.status.label = "modified";
+    			//compare if both columns are still equals
+                var keys1 = Object.keys(c.value[0].data);
+                var keys2 = Object.keys(c.value[1].data);
+                var deleted_columns = [];
+                var added_columns = [];
+                if (!(JSON.stringify(keys1) == JSON.stringify(keys2))) {
+                    //colums name not anymrore equals, a column has been inserted or deleted
+                    var deleted_columns = keys1.filter(function(x){return keys2.indexOf(x) == -1});
+                    var added_columns = keys2.filter(function(x){return keys1.indexOf(x) == -1});
+                    if(deleted_columns_glob == null){
+    					log.warn("TEHEERE "+ JSON.stringify(deleted_columns))
+    					log.warn("TEHEERE2 "+ JSON.stringify(added_columns))
+    					deleted_columns_glob = deleted_columns;
+    					added_columns_glob = added_columns
+    				}
+                }
+                var modifiedVals = Object.keys(c.value[0].data).filter(function(x){ return (c.value[0].data[x] != undefined && c.value[0].data[x] != c.value[1].data[x]) && (deleted_columns != undefined && deleted_columns.indexOf(x) == -1) && (added_columns != undefined && added_columns.indexOf(x) == -1) });
+                c.status.structure = { deleted_columns: deleted_columns, added_columns: added_columns, values: modifiedVals };
+    		}
+    	}
+    	else{
+    		c.status.label = c.value[0].refVersion == +v1 ? "deleted" : "added";
+    	}
+    	return c;
+    	
+    })
+    log.warn("TEHEERE "+ JSON.stringify(deleted_columns_glob))
+    					log.warn("TEHEERE2 "+ JSON.stringify(added_columns_glob))
+    /*var rowData0, rowData1 = [];
+    var obj = {};
+    for (var idx = 0; idx < rows_filtered.length; idx++) {
+    	var currentItem = rows_filtered[index];
+    	switch(currentItem.status.label){
+    		case "same":
+    			obj = {};
+    			col0.forEach(function(elem){
+    				obj[elem] = currentItem.value[0].data[elem];
+    			})
+    			rowData0.push(obj);
+    			obj = {};
+    			col1.forEach(function(elem){
+    				obj[elem] = currentItem.value[1].data[elem];
+    			});
+    		break;
+    		case "deleted":
+    			obj = {};
+    			col0.forEach(function(elem){
+    				obj[elem] = currentItem.value[0].data[elem];
+    			})
+    			rowData0.push(obj);
+    		break;
+    		case "added":
+    		break;
+    	}
+        
+    }*/
+    log.warn(""+JSON.stringify(rows_filtered));'
+↓JSON_to_XML [steps.JsonToXmlStep-1665396484677]: 
+  jsonObject: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: JS
+        - →→: rows_filtered
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: results
+↓JSON_to_XML_1 [steps.JsonToXmlStep-1665396484680]: 
+  jsonObject: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: JS
+        - →→: col0
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: col0
+↓JSON_to_XML_2 [steps.JsonToXmlStep-1665396484683]: 
+  jsonObject: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: JS
+        - →→: col1
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: col1
+↓JSON_to_XML_3 [steps.JsonToXmlStep-1665408281993]: 
+  jsonObject: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: JS
+        - →→: added_columns_glob
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: added_columns
+↓JSON_to_XML_4 [steps.JsonToXmlStep-1665408283449]: 
+  jsonObject: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: JS
+        - →→: deleted_columns_glob
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: deleted_columns
+↓ref [variables.RequestableVariable-1665396484686]: 
+↓v1 [variables.RequestableVariable-1665396484689]: 
+↓v2 [variables.RequestableVariable-1665396484692]: 
+↓id [variables.RequestableVariable-1665396484695]: 
