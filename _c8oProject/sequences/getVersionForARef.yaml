@@ -1,0 +1,40 @@
+↓Sequence_JS [steps.SimpleStep-1665576722096]: 
+  expression: |
+    var _use_ddoc = "Refs";
+    var _use_view = "getRefsOfVersion";
+    var _use_reduce = true;
+    var _use_inclusive_end = true;
+    var _use_group = true;
+    var _use_startkey = '["'+ ref+'"]';
+    var _use_endkey = '["'+ ref+'", {}]';
+↓Call_Transaction [steps.TransactionStep-1665576722099]: 
+  sourceTransaction: lib_compare_files.compare_files.GetView
+  ↓_use_ddoc [variables.StepVariable-1665576722102]: 
+    description: Design document name
+  ↓_use_view [variables.StepVariable-1665576722105]: 
+    description: View function name
+  ↓_use_reduce [variables.StepVariable-1665576722108]: 
+    description: (boolean) – Use the reduction function. Default is true
+  ↓_use_startkey [variables.StepVariable-1665576722111]: 
+    description: (string) – Return records starting with the specified key. Optional
+  ↓_use_endkey [variables.StepVariable-1665576722114]: 
+    description: (string) – Stop returning records when the specified key is reached. Optional
+  ↓_use_group [variables.StepVariable-1665576722117]: 
+    description: (boolean) – Group the results using the reduce function to a group or single row. Default is false
+  ↓_use_group_level [variables.StepVariable-1665576722120]: 
+    description: (number) – Specify the group level to be used. Optional
+  ↓_use_inclusive_end [variables.StepVariable-1665576722123]: 
+    description: (boolean) – Specifies whether the specified end key should be included in the result. Default is true
+↓Copy [steps.XMLCopyStep-1665576722126]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665576722099
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/rows/item/value
+↓ref [variables.RequestableVariable-1665576759237]: 
+↓Test_Case [core.TestCase]: 
+  ↓ref [variables.TestCaseVariable-1665576796057]: 
+    value: MyRef

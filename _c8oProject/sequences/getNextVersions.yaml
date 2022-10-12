@@ -1,0 +1,53 @@
+↓computeStartAndEndKey [steps.SimpleStep-1665569601360]: 
+  expression: |
+    var _use_startkey = "[\""+ refName + "\"]";
+    var _use_endkey = "[\""+ refName + "\", {}]";
+  output: true
+↓Call_Transaction_1 [steps.TransactionStep-1665569601363]: 
+  sourceTransaction: lib_compare_files.compare_files.GetView
+  ↓_use_ddoc [variables.StepVariable-1665569601366]: 
+    description: Design document name
+    value: Refs
+  ↓_use_view [variables.StepVariable-1665569601369]: 
+    description: View function name
+    value: getVersions
+  ↓_use_reduce [variables.StepVariable-1665569601372]: 
+    description: (boolean) – Use the reduction function. Default is true
+    value: true
+  ↓_use_startkey [variables.StepVariable-1665569601375]: 
+    description: (string) – Return records starting with the specified key. Optional
+  ↓_use_endkey [variables.StepVariable-1665569601378]: 
+    description: (string) – Stop returning records when the specified key is reached. Optional
+  ↓_use_group [variables.StepVariable-1665569601381]: 
+    description: (boolean) – Group the results using the reduce function to a group or single row. Default is false
+    value: true
+  ↓_use_group_level [variables.StepVariable-1665569601384]: 
+    description: (number) – Specify the group level to be used. Optional
+    value: 2
+↓JsonSource_1 [steps.JsonSourceStep-1665569601387]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665569601363
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output
+  variableName: versions
+↓getNextRefVersion [steps.SimpleStep-1665569601393]: 
+  expression: |
+    'var nextVersion = 1;
+    if(versions.rows != undefined && versions.rows.length > 0){
+    	versions = versions.rows.map((x)=>{
+    		return x.value;
+    	})
+    	log.warn("versions =>>>>> "+JSON.stringify(versions))
+    	nextVersion = Math.max.apply(Math, versions) + 1;
+    	log.warn("existing versions for this ref are " + JSON.stringify(versions));
+    }
+    log.warn("next ref version is " + JSON.stringify(nextVersion));
+    '
+↓jElement [steps.ElementStep-1665569642459]: 
+  expression: '""+nextVersion'
+  nodeName: nextVersion
+↓refName [variables.RequestableVariable-1665569610851]: 

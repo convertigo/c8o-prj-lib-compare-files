@@ -1,10 +1,35 @@
 ↓Input_variables [steps.InputVariablesStep-1665396484727]: 
+↓Call_Sequence_1 [steps.SequenceStep-1665569921781]: 
+  sourceSequence: lib_compare_files.getNextVersions
+  ↓refName [variables.StepVariable-1665569921784]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1665396484727
+          - java.lang.String: 
+            - ↑value: ./refName/text()
+↓jSimpleSource_1 [steps.SimpleSourceStep-1665569921787]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665569921781
+        - java.lang.String: 
+          - ↑value: ./document/nextVersion/text()
+  variableName: nextVersion
+↓nextV [steps.SimpleStep-1665570390811]: 
+  expression: nextVersion = +nextVersion;
 ↓computeStartAndEndKey [steps.SimpleStep-1665396484730]: 
   expression: |
     var _use_startkey = "[\""+ refName + "\"]";
     var _use_endkey = "[\""+ refName + "\", {}]";
+  isEnabled: false
   output: true
 ↓Call_Transaction_1 [steps.TransactionStep-1665396484733]: 
+  isEnabled: false
   sourceTransaction: lib_compare_files.compare_files.GetView
   ↓_use_ddoc [variables.StepVariable-1665396484736]: 
     description: Design document name
@@ -20,6 +45,7 @@
   ↓_use_endkey [variables.StepVariable-1665396484748]: 
     description: (string) – Stop returning records when the specified key is reached. Optional
 ↓JsonSource_1 [steps.JsonSourceStep-1665396484751]: 
+  isEnabled: false
   sourceDefinition: 
     - xmlizable: 
       - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
@@ -40,6 +66,7 @@
     	log.warn("existing versions for this ref are " + JSON.stringify(versions));
     }
     log.warn("next ref version is " + JSON.stringify(nextVersion));'
+  isEnabled: false
 ↓jSimpleSource [steps.SimpleSourceStep-1665396484757]: 
   sourceDefinition: 
     - xmlizable: 
@@ -52,6 +79,7 @@
   variableName: fp
 ↓Read_CSV [steps.ReadCSVStep-1665396484760]: 
   dataFile: fp
+  separator: ;
 ↓JsonSource [steps.JsonSourceStep-1665396484763]: 
   sourceDefinition: 
     - xmlizable: 

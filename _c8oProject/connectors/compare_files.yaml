@@ -1,4 +1,7 @@
 databaseName: compare_files
+↓GetDocument [transactions.couchdb.GetDocumentTransaction]: 
+  ↓_use_docid [variables.RequestableVariable-1665565892767]: 
+    description: Document ID
 ↓GetServerInfo [transactions.couchdb.GetServerInfoTransaction]: 
   ↑default: true
 ↓GetView [transactions.couchdb.GetViewTransaction]: 
@@ -16,6 +19,8 @@ databaseName: compare_files
     description: (boolean) – Group the results using the reduce function to a group or single row. Default is false
   ↓_use_group_level [variables.RequestableVariable-1665396413980]: 
     description: (number) – Specify the group level to be used. Optional
+  ↓_use_inclusive_end [variables.RequestableVariable-1665562642657]: 
+    description: (boolean) – Specifies whether the specified end key should be included in the result. Default is true
 ↓PostBulkDocuments [transactions.couchdb.PostBulkDocumentsTransaction]: 
   ↓_use_json_base [variables.RequestableVariable-1665396413984]: 
     description: (string) – JSON use as a base for the array of documents (js array), or for individual documents (js object). Optional
@@ -32,7 +37,9 @@ databaseName: compare_files
           "getVersions": {
             "map": "function (doc) {\r\n
           try {\r\n
-              emit([doc.ref, doc.refVersion], doc.refVersion);\r\n
+              if(doc.ref && doc.refVersion){\r\n
+                  emit([doc.ref, doc.refVersion], doc.refVersion);\r\n
+              }\r\n
           } catch (err) {\r\n
               log(err.message);\r\n
           }\r\n
@@ -47,7 +54,13 @@ databaseName: compare_files
               log(err.message);\r\n
           }\r\n
       }",
-            "reduce": "_approx_count_distinct"
+            "reduce": "function (keys, values, rereduce) {\r\n
+          try {\r\n
+              return values[0];\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
           },
           "getRefByVersion": {
             "map": "function (doc) {\r\n
@@ -73,6 +86,52 @@ databaseName: compare_files
               } else {\r\n
                   return values;\r\n
               }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
+          },
+          "getVersionsAndData": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              emit([doc.ref, doc.refVersion], doc.data);\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }",
+            "reduce": "_approx_count_distinct"
+          },
+          "distinctRefs": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if(doc.ref){\r\n
+                  emit(doc.ref, doc.ref);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }",
+            "reduce": "function (keys, values, rereduce) {\r\n
+          try {\r\n
+              return values.length;\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
+          },
+          "getRefsOfVersion": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if(doc.ref){\r\n
+                  emit([doc.ref, doc.refVersion], doc.refVersion);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }",
+            "reduce": "function (keys, values, rereduce) {\r\n
+          try {\r\n
+              return values[0];\r\n
           } catch (err) {\r\n
               log(err.message);\r\n
           }\r\n

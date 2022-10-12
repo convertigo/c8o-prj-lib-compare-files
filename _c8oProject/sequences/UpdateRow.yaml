@@ -1,0 +1,158 @@
+↓Input_variables [steps.InputVariablesStep-1665564392866]: 
+↓Call_Sequence_1 [steps.SequenceStep-1665569729895]: 
+  sourceSequence: lib_compare_files.getNextVersions
+  ↓refName [variables.StepVariable-1665569741553]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1665564392866
+          - java.lang.String: 
+            - ↑value: ./refName/text()
+↓jSimpleSource_1 [steps.SimpleSourceStep-1665569766458]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665569729895
+        - java.lang.String: 
+          - ↑value: ./document/nextVersion/text()
+  variableName: nextVersion
+↓nextV [steps.SimpleStep-1665570412648]: 
+  expression: nextVersion = +nextVersion;
+↓computeStartAndEndKey [steps.SimpleStep-1665564392869]: 
+  expression: |
+    var _use_startkey = "[\""+ refName + "\"]";
+    var _use_endkey = "[\""+ refName + "\", {}]";
+  isEnabled: false
+  output: true
+↓Call_Transaction_1 [steps.TransactionStep-1665564392872]: 
+  isEnabled: false
+  sourceTransaction: lib_compare_files.compare_files.GetView
+  ↓_use_ddoc [variables.StepVariable-1665564392875]: 
+    description: Design document name
+    value: Refs
+  ↓_use_view [variables.StepVariable-1665564392878]: 
+    description: View function name
+    value: getVersions
+  ↓_use_reduce [variables.StepVariable-1665564392881]: 
+    description: (boolean) – Use the reduction function. Default is true
+    value: true
+  ↓_use_startkey [variables.StepVariable-1665564392884]: 
+    description: (string) – Return records starting with the specified key. Optional
+  ↓_use_endkey [variables.StepVariable-1665564392887]: 
+    description: (string) – Stop returning records when the specified key is reached. Optional
+  ↓_use_group [variables.StepVariable-1665569521553]: 
+    description: (boolean) – Group the results using the reduce function to a group or single row. Default is false
+    value: true
+  ↓_use_group_level [variables.StepVariable-1665569521555]: 
+    description: (number) – Specify the group level to be used. Optional
+    value: 2
+↓JsonSource_1 [steps.JsonSourceStep-1665564392890]: 
+  isEnabled: false
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665564392872
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output
+  variableName: versions
+↓jSimpleSource [steps.SimpleSourceStep-1665566358606]: 
+  isEnabled: false
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665564392866
+        - java.lang.String: 
+          - ↑value: ./data/text()
+  variableName: data
+↓computeData [steps.SimpleStep-1665564392893]: 
+  expression: |
+    log.warn("data" + data);
+    var data2 = JSON.parse(data);
+    var data = JSON.parse(data);
+    var v = ((+nextVersion) -1);
+    
+    var _use_docid = refName + "_" + v  + "_" + data.Matricule;
+    log.warn("_use_docid "+ _use_docid)
+↓Call_Transaction [steps.TransactionStep-1665565899141]: 
+  sourceTransaction: lib_compare_files.compare_files.GetDocument
+  ↓_use_docid [variables.StepVariable-1665565914356]: 
+    description: Document ID
+↓JsonSource [steps.JsonSourceStep-1665566689528]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665565899141
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output
+  variableName: result
+↓Call_Sequence [steps.SequenceStep-1665566750994]: 
+  sourceSequence: lib_compare_files.getReferentiel
+  ↓ref [variables.StepVariable-1665566762767]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1665564392866
+          - java.lang.String: 
+            - ↑value: ./refName/text()
+  ↓v [variables.StepVariable-1665566762769]: 
+↓JsonSource1 [steps.JsonSourceStep-1665566834254]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665566750994
+        - java.lang.String: 
+          - ↑value: ./document
+  variableName: result2
+↓Sequence_JS [steps.SimpleStep-1665566867527]: 
+  expression: |
+    'log.warn("result => " + JSON.stringify(result));
+    log.warn("result2 => " + JSON.stringify(result2));
+    
+    /*
+    
+    "_id": "MyRef_1_fl0001923",
+      "ref": "MyRef",
+      "refVersion": 1,
+      "version": 1,
+      "currentID": "fl0001923",
+      "index": 0,
+      
+      */
+    var i = -1;
+    var _use_json_base = result2.document.rawData.map(function(x){
+    	i++;
+    		log.warn("x.Matricule " +  x.Matricule);
+    		log.warn("data.Matricule " +  data2.Matricule)
+    		return {
+    			_id: refName + "_" + nextVersion  + "_" + x.Matricule,
+    			ref: "" + refName,
+    			"refVersion": nextVersion,
+    			"currentID": x.Matricule,
+    			index: i,
+    			data: (x.Matricule == data.Matricule ? data : x)
+    		}
+    })
+    var _use_json_base  = "" + JSON.stringify(_use_json_base);
+    log.warn("result3 => " + _use_json_base);
+    '
+↓Call_Transaction1 [steps.TransactionStep-1665568000336]: 
+  output: true
+  sourceTransaction: lib_compare_files.compare_files.PostBulkDocuments
+  ↓_use_json_base [variables.StepVariable-1665568000339]: 
+    description: (string) – JSON use as a base for the array of documents (js array), or for individual documents (js object). Optional
+↓refName [variables.RequestableVariable-1665564330136]: 
+↓data [variables.RequestableVariable-1665564339169]: 

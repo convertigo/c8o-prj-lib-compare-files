@@ -1,0 +1,108 @@
+↓Input_variables [steps.InputVariablesStep-1665570230246]: 
+↓Call_Sequence_1 [steps.SequenceStep-1665570220376]: 
+  sourceSequence: lib_compare_files.getNextVersions
+  ↓refName [variables.StepVariable-1665570220379]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1665570230246
+          - java.lang.String: 
+            - ↑value: ./ref/text()
+↓jSimpleSource_1 [steps.SimpleSourceStep-1665570220382]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665570220376
+        - java.lang.String: 
+          - ↑value: ./document/nextVersion/text()
+  variableName: nextVersion
+↓nextV [steps.SimpleStep-1665570418745]: 
+  expression: nextVersion = +nextVersion;
+↓computeKeys [steps.SimpleStep-1665561972388]: 
+  expression: |
+    var currentVersion = (+nextVersion) - 1;
+    var _use_ddoc = "Refs";
+    var _use_view = "getVersionsAndData";
+    var _use_reduce = false;
+    var _use_startkey = '["'+ ref+'", ' + (currentVersion) + ']';
+    var _use_endkey = '["'+ ref+'", ' + (currentVersion) + ']';
+    var _use_inclusive_end = true;
+    log.warn("startkey " + _use_startkey)
+↓Call_Transaction [steps.TransactionStep-1665561972391]: 
+  sourceTransaction: lib_compare_files.compare_files.GetView
+  ↓_use_ddoc [variables.StepVariable-1665561972394]: 
+    description: Design document name
+  ↓_use_view [variables.StepVariable-1665561972397]: 
+    description: View function name
+  ↓_use_reduce [variables.StepVariable-1665561972400]: 
+    description: (boolean) – Use the reduction function. Default is true
+  ↓_use_startkey [variables.StepVariable-1665561972403]: 
+    description: (string) – Return records starting with the specified key. Optional
+  ↓_use_endkey [variables.StepVariable-1665561972406]: 
+    description: (string) – Stop returning records when the specified key is reached. Optional
+  ↓_use_group [variables.StepVariable-1665561972409]: 
+    description: (boolean) – Group the results using the reduce function to a group or single row. Default is false
+  ↓_use_group_level [variables.StepVariable-1665561972412]: 
+    description: (number) – Specify the group level to be used. Optional
+  ↓_use_inclusive_end [variables.StepVariable-1665562648284]: 
+    description: (boolean) – Specifies whether the specified end key should be included in the result. Default is true
+↓JsonSource [steps.JsonSourceStep-1665561972415]: 
+  output: true
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1665561972391
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/rows
+  variableName: rows
+↓Compare [steps.SimpleStep-1665561972418]: 
+  expression: |
+    'var col0, col1;
+    log.warn("ZZZZZZZZZZZZZZZZ"+JSON.stringify(rows));
+    
+    var col0 = [];
+    var rawData = [];
+    Object.keys(rows[0].value).forEach(function(x){
+    	col0.push({"field" : x});
+    });
+    rawData = rows.map(function(y){
+    	return y.value;
+    })
+    
+    log.warn(" rawData "+JSON.stringify(rawData));
+    log.warn(" col0 "+JSON.stringify(col0));'
+  output: true
+↓JSON_to_XML [steps.JsonToXmlStep-1665561972421]: 
+  jsonObject: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: JS
+        - →→: rawData
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: rawData
+↓JSON_to_XML_1 [steps.JsonToXmlStep-1665561972424]: 
+  jsonObject: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: JS
+        - →→: col0
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: col0
+↓ref [variables.RequestableVariable-1665561972436]: 
+↓v [variables.RequestableVariable-1665561972439]: 

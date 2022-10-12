@@ -123,6 +123,39 @@ scriptContent:
                           - xmlizable: 
                             - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
                             - MobileSmartSourceType: script:this.v2
+          ↓GridCol1 [ngx.components.UIDynamicElement-1665568830291]: 
+            beanData: '{"ionBean":"GridCol"}'
+            tagName: ion-col
+            ↓Button [ngx.components.UIDynamicElement-1665568415620]: 
+              beanData: '{"ionBean":"Button"}'
+              tagName: ion-button
+              ↓Label [ngx.components.UIDynamicElement-1665568415623]: 
+                beanData: '{"ionBean":"Label"}'
+                tagName: ion-label
+                ↓Text [ngx.components.UIText-1665568415626]: 
+                  textValue: 
+                    - xmlizable: 
+                      - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                      - MobileSmartSourceType: plain:Comparer
+              ↓Event [ngx.components.UIControlEvent-1665568415629]: 
+                ↓InvokeSharedAction [ngx.components.UIDynamicInvoke-1665568800908]: 
+                  beanData: '{"ionBean":"InvokeAction"}'
+                  stack: lib_compare_files.Application.NgxApp.doCompare
+                  ↓ref [ngx.components.UIControlVariable-1665568800911]: 
+                    varValue: 
+                      - xmlizable: 
+                        - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                        - MobileSmartSourceType: script:this.ref
+                  ↓v1 [ngx.components.UIControlVariable-1665568800914]: 
+                    varValue: 
+                      - xmlizable: 
+                        - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                        - MobileSmartSourceType: script:this.v1
+                  ↓v2 [ngx.components.UIControlVariable-1665568800917]: 
+                    varValue: 
+                      - xmlizable: 
+                        - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                        - MobileSmartSourceType: script:this.v2
     ↓GridCol1 [ngx.components.UIDynamicElement-1665400036903]: 
       beanData: '{"ionBean":"GridCol","Size":"plain:12"}'
       tagName: ion-col
