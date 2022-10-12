@@ -44,7 +44,13 @@ databaseName: compare_files
               log(err.message);\r\n
           }\r\n
       }",
-            "reduce": "_approx_count_distinct"
+            "reduce": "function (keys, values, rereduce) {\r\n
+          try {\r\n
+              return values[0];\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
           },
           "getRef": {
             "map": "function (doc) {\r\n

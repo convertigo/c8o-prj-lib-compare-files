@@ -51,3 +51,6 @@
   expression: '""+nextVersion'
   nodeName: nextVersion
 ↓refName [variables.RequestableVariable-1665569610851]: 
+↓Test_Case [core.TestCase]: 
+  ↓refName [variables.TestCaseVariable-1665578961665]: 
+    value: MyRef
